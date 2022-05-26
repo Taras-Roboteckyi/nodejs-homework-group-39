@@ -28,7 +28,7 @@ router.get("/", async (req, res, next) => {
       },
     });
   } catch (error) {
-    next(error.message); //Коли база данних не відповідає
+    next(error.message); /* Коли база данних не відповідає */
   }
 });
 
@@ -37,9 +37,12 @@ router.get("/:id", async (req, res, next) => {
     const { id } = req.params;
     const result = await contactsOperations.getContactById(id);
     if (!result) {
-      throw createError(404, `Contact with id=${id} not found`); //через пакет <http-errors>
+      throw createError(
+        404,
+        `Contact with id=${id} not found`
+      ); /* через пакет <http-errors> */
 
-      //Або 2 варіант генерити вручну помилку
+      /* Або 2 варіант генерити вручну помилку */
       /*  const error = new Error(`Contact with id=${id} not found`);
       error.status = 404;
       throw error; */
