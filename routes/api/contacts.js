@@ -1,19 +1,11 @@
 const express = require("express");
 const createError = require("http-errors");
-const Joi = require("joi");
-
-const contactSchema = Joi.object({
-  name: Joi.string().min(8).required(),
-  email: Joi.string()
-    .email({
-      minDomainSegments: 2,
-      tlds: { allow: ["com", "net"] },
-    })
-    .required(),
-  phone: Joi.string().min(7).max(15).required(),
-});
 
 const router = express.Router();
+
+const validation = require("../../middlewares/validation");
+const contactSchema = require("../../shemas/contactSchema");
+const validateMiddleware = validation(contactSchema);
 
 const contactsOperations = require("../../models");
 
@@ -51,7 +43,7 @@ router.get("/:id", async (req, res, next) => {
       status: "success",
       code: 200,
       data: {
-        result: result,
+        result,
       },
     });
   } catch (error) {
@@ -59,13 +51,8 @@ router.get("/:id", async (req, res, next) => {
   }
 });
 
-router.post("/", async (req, res, next) => {
+router.post("/", validateMiddleware, async (req, res, next) => {
   try {
-    const { error } = contactSchema.validate(req.body);
-    if (error) {
-      error.status = 400;
-      throw error;
-    }
     const newContact = await contactsOperations.addContact(req.body);
     res.status(201).json({
       status: "success",
@@ -79,12 +66,43 @@ router.post("/", async (req, res, next) => {
   }
 });
 
-router.delete("/:contactId", async (req, res, next) => {
-  res.json({ message: "template message" });
+router.delete("/:id", async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const deleteContact = await contactsOperations.removeContact(id);
+    if (!deleteContact) {
+      throw createError(404, `Not found`); /* через пакет <http-errors> */
+    }
+    res.json({
+      status: "success",
+      code: 200,
+      message: "contact deleted",
+      data: {
+        result: deleteContact,
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
 });
 
-router.put("/:contactId", async (req, res, next) => {
-  res.json({ message: "template message" });
+router.put("/:id", validateMiddleware, async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    const result = await contactsOperations.updateContact(id, req.body);
+    if (!result) {
+      throw createError(404, `Not found`); /* через пакет <http-errors> */
+    }
+    res.json({
+      status: "success",
+      code: 200,
+      data: {
+        result,
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
 });
 
 module.exports = router;
