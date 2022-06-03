@@ -4,14 +4,15 @@ const createError = require("http-errors");
 const router = express.Router();
 
 const validation = require("../../middlewares/validation");
-const contactSchema = require("../../shemas/contactSchema");
-const validateMiddleware = validation(contactSchema);
+const { joiSchema, favoriteJoiSchema } = require("../../models/contact");
+const validateMiddleware = validation(joiSchema);
 
-const contactsOperations = require("../../models");
+const { Contact } = require("../../models/contact");
 
 router.get("/", async (req, res, next) => {
   try {
-    const contacts = await contactsOperations.listContacts();
+    const contacts = await Contact.find({});
+    console.log("lfdfq");
     res.json({
       status: "success",
       code: 200,
@@ -27,17 +28,10 @@ router.get("/", async (req, res, next) => {
 router.get("/:id", async (req, res, next) => {
   try {
     const { id } = req.params;
-    const result = await contactsOperations.getContactById(id);
+    const result = await Contact.findById(id);
+    console.log(result);
     if (!result) {
-      throw createError(
-        404,
-        `Contact with id=${id} not found`
-      ); /* через пакет <http-errors> */
-
-      /* Або 2 варіант генерити вручну помилку */
-      /*  const error = new Error(`Contact with id=${id} not found`);
-      error.status = 404;
-      throw error; */
+      throw createError(404, `Contact with id=${id} not found`);
     }
     res.json({
       status: "success",
@@ -53,7 +47,7 @@ router.get("/:id", async (req, res, next) => {
 
 router.post("/", validateMiddleware, async (req, res, next) => {
   try {
-    const newContact = await contactsOperations.addContact(req.body);
+    const newContact = await Contact.create(req.body);
     res.status(201).json({
       status: "success",
       code: 201,
@@ -69,9 +63,9 @@ router.post("/", validateMiddleware, async (req, res, next) => {
 router.delete("/:id", async (req, res, next) => {
   try {
     const { id } = req.params;
-    const deleteContact = await contactsOperations.removeContact(id);
+    const deleteContact = await Contact.findByIdAndRemove(id);
     if (!deleteContact) {
-      throw createError(404, `Not found`); /* через пакет <http-errors> */
+      throw createError(404, `Not found`); // через пакет <http-errors>
     }
     res.json({
       status: "success",
@@ -89,9 +83,9 @@ router.delete("/:id", async (req, res, next) => {
 router.put("/:id", validateMiddleware, async (req, res, next) => {
   try {
     const { id } = req.params;
-    const result = await contactsOperations.updateContact(id, req.body);
+    const result = await Contact.findByIdAndUpdate(id, req.body, { new: true });
     if (!result) {
-      throw createError(404, `Not found`); /* через пакет <http-errors> */
+      throw createError(404, `Not found`); // через пакет <http-errors>
     }
     res.json({
       status: "success",
@@ -104,5 +98,38 @@ router.put("/:id", validateMiddleware, async (req, res, next) => {
     next(error);
   }
 });
+
+router.patch(
+  "/:id/favorite",
+  validation(favoriteJoiSchema),
+  async (req, res, next) => {
+    try {
+      const { id } = req.params;
+      const { favorite } = req.body;
+      const result = await Contact.findByIdAndUpdate(
+        id,
+        { favorite },
+        {
+          new: true,
+        }
+      );
+      if (!favorite) {
+        throw createError(400, `missing field favorite `);
+      }
+      if (!result) {
+        throw createError(404, `Not found`); // через пакет <http-errors>
+      }
+      res.json({
+        status: "success",
+        code: 200,
+        data: {
+          result,
+        },
+      });
+    } catch (error) {
+      next(error);
+    }
+  }
+);
 
 module.exports = router;
