@@ -1,3 +1,4 @@
+/* const mongoose = require("mongoose"); */
 const app = require("./app");
 
 const { PORT = 4600 } = process.env;
