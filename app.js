@@ -1,8 +1,22 @@
+//XBP$B_LS6EEegb8;
+//mongodb+srv://Taras:XBP$B_LS6EEegb8@cluster0.4djrp.mongodb.net/test
+
 const express = require("express");
 const logger = require("morgan");
 const cors = require("cors");
+const mongoose = require("mongoose");
+const { DB_HOST } = require("./config");
+
+mongoose
+  .connect(DB_HOST)
+  .then(() => console.log("Database connection successful"))
+  .catch((error) => {
+    console.log(error.message);
+    process.exit(1);
+  });
 
 const contactsRouter = require("./routes/api/contacts");
+const { error } = require("./shemas/contactSchema");
 
 const app = express();
 
