@@ -1,6 +1,7 @@
 const { Schema, model } = require("mongoose");
 const Joi = require("joi");
 
+/* створюєм схему */
 const contactSchema = Schema(
   {
     name: {
@@ -39,8 +40,9 @@ const joiSchema = Joi.object({
   }),
   favorite: Joi.bool(),
 });
+
 const favoriteJoiSchema = Joi.object({ favorite: Joi.bool() });
 
-const Contact = model("contacts", contactSchema); //створюєм модель
+const Contact = model("contacts", contactSchema); /* створюєм модель */
 
 module.exports = { Contact, joiSchema, favoriteJoiSchema };

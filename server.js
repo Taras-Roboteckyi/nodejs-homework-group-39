@@ -3,7 +3,7 @@ const app = require("./app");
 
 const { DB_HOST, PORT = 4600 } = process.env;
 
-mongoose //Підключаємся до бази данних
+mongoose /* Підключаємся до бази данних */
   .connect(DB_HOST)
   .then(() => {
     console.log("Database connection successful");

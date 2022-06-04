@@ -1,15 +1,11 @@
-//XBP$B_LS6EEegb8;
-//mongodb+srv://Taras:XBP$B_LS6EEegb8@cluster0.4djrp.mongodb.net/test
-
 const express = require("express");
 const logger = require("morgan");
 const cors = require("cors");
 
-const dotenv = require("dotenv"); //загружаєм змінні окружения из файла .env в process.env
+const dotenv = require("dotenv"); /* загружаєм змінні окружения из файла .env в process.env */
 dotenv.config();
 
 const contactsRouter = require("./routes/api/contacts");
-//const { error } = require("./models/contact");
 
 const app = express();
 
