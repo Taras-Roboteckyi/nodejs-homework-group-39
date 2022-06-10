@@ -53,7 +53,7 @@ const joiSchema = Joi.object({
 });
 
 userSchema.methods.comparePassword = function (password) {
-  return bcrypt.compareSync(password, this.password); //перевіряєм чи є захешований пароль в БД, поверне false або true
+  return bcrypt.compareSync(password, this.password); // перевіряєм чи є захешований пароль в БД, поверне false або true
 };
 
 const User = model("users", userSchema); /* створюєм модель */

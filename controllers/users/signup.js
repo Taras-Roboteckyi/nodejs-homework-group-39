@@ -5,12 +5,12 @@ const bcrypt = require("bcryptjs");
 const signUp = async (req, res, next) => {
   const { email, password } = req.body;
 
-  const user = await User.findOne({ email }); //поверне null якщо не знайде
+  const user = await User.findOne({ email }); // поверне null якщо не знайде
   if (user) {
     throw createError(409, `Email ${email} in use`);
   }
-  const salt = bcrypt.genSaltSync(10); //солим наш пароль
-  const hashPassword = bcrypt.hashSync(password, salt); //хешуєм наш пароль
+  const salt = bcrypt.genSaltSync(10); // солим наш пароль
+  const hashPassword = bcrypt.hashSync(password, salt); // хешуєм наш пароль
 
   const result = await User.create({ email, password: hashPassword });
   const { subscription } = result;
