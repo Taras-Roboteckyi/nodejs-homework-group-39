@@ -2,7 +2,8 @@ const { Contact } = require("../../models/contact");
 
 const getAll = async (req, res, next) => {
   try {
-    const contacts = await Contact.find({});
+    const { _id } = req.user; // витягуєм з middlewares auth
+    const contacts = await Contact.find({ owner: _id }); // шукаєм контакти які сам власник і додав до БД
 
     res.json({
       status: "success",

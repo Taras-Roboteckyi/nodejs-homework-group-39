@@ -17,12 +17,12 @@ const logIn = async (req, res, next) => {
 
   const payload = {
     // створюєм id для токена
-    id: user.id,
+    id: user._id,
   };
 
   const token = jwt.sign(payload, SECRET_KEY, { expiresIn: "1h" }); // створюєм ТОКЕН, який свіжий буде 1 годину
-  console.log(user);
-  res.status(200).json({
+
+  res.json({
     status: "success",
     code: 200,
     data: {
