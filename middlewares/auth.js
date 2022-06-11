@@ -26,7 +26,8 @@ const auth = async (req, res, next) => {
     const { id } = jwt.verify(token, SECRET_KEY); // Проверить валидность второго слова (токен). Если токен валиден - извлечь из него id и найти пользователя в базе с таким id
     const user = await User.findById(id);
 
-    if (!user) {
+    if (!user || !user.token) {
+      // якщо usera немає або він розлогінений(контролер logout)
       throw createError(401, "Not authorized");
     }
 

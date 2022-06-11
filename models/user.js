@@ -56,6 +56,6 @@ userSchema.methods.comparePassword = function (password) {
   return bcrypt.compareSync(password, this.password); // перевіряєм чи є захешований пароль в БД, поверне false або true
 };
 
-const User = model("users", userSchema); /* створюєм модель */
+const User = model("user", userSchema); /* створюєм модель */
 
 module.exports = { User, joiSchema };

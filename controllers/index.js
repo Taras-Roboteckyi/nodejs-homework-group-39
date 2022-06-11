@@ -1,4 +1,4 @@
-const users = require("./users");
+const users = require("./auth");
 const usersCurrent = require("./userCurrent");
 
 module.exports = {

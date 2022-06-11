@@ -21,6 +21,7 @@ const logIn = async (req, res, next) => {
   };
 
   const token = jwt.sign(payload, SECRET_KEY, { expiresIn: "1h" }); // створюєм ТОКЕН, який свіжий буде 1 годину
+  const updateToken = await User.findByIdAndUpdate(user._id, { token }); // записуєм новий токен в БД
 
   res.json({
     status: "success",
