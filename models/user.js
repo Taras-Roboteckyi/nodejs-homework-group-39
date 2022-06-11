@@ -27,6 +27,10 @@ const userSchema = Schema(
   { versionKey: false, timestamps: true }
 );
 
+userSchema.methods.comparePassword = function (password) {
+  return bcrypt.compareSync(password, this.password); // перевіряєм чи є захешований пароль в БД, поверне false або true
+};
+
 /* створюєм додатково JOI схему */
 const joiSchema = Joi.object({
   password: Joi.string().min(8).required().messages({
@@ -41,21 +45,17 @@ const joiSchema = Joi.object({
     .messages({
       "any.required": "missing required email field",
     }),
-  /*  subscription: Joi.string().required().messages({
-    "any.required": "missing required subscription field",
-  }),
-  token: Joi.string().required().messages({
-    "any.required": "missing required token field",
-  }),
-  owner: Joi.string().required().messages({
-    "any.required": "missing required owner field",
-  }), */
 });
 
-userSchema.methods.comparePassword = function (password) {
-  return bcrypt.compareSync(password, this.password); // перевіряєм чи є захешований пароль в БД, поверне false або true
-};
+const subscriptionJoiSchema = Joi.object({
+  subscription: Joi.string()
+    .valid("starter", "pro", "business")
+    .required()
+    .messages({
+      "any.required": "missing required subscription field",
+    }),
+});
 
 const User = model("user", userSchema); /* створюєм модель */
 
-module.exports = { User, joiSchema };
+module.exports = { User, joiSchema, subscriptionJoiSchema };
