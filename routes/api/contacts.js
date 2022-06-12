@@ -2,8 +2,8 @@ const express = require("express");
 
 const router = express.Router();
 
-const validation = require("../../middlewares/validation");
-const idValidation = require("../../middlewares/idValidation");
+const { auth, validation, idValidation } = require("../../middlewares");
+
 const { joiSchema, favoriteJoiSchema } = require("../../models/contact");
 const validateMiddleware = validation(joiSchema);
 
@@ -16,11 +16,11 @@ const {
   updateStatusContact,
 } = require("../../controllers/contacts");
 
-router.get("/", getAll);
+router.get("/", auth, getAll);
 
 router.get("/:id", idValidation, getById);
 
-router.post("/", validateMiddleware, addContact);
+router.post("/", auth, validateMiddleware, addContact);
 
 router.delete("/:id", idValidation, removeContact);
 
