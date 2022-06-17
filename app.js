@@ -1,7 +1,6 @@
 const express = require("express");
 const logger = require("morgan");
 const cors = require("cors");
-const multer = require("multer");
 
 const dotenv = require("dotenv"); /* загружаєм змінні окружения из файла .env в process.env */
 dotenv.config();
