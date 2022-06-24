@@ -10,9 +10,9 @@ const logIn = async (req, res, next) => {
 
   const user = await User.findOne({ email }); // поверне null якщо не знайде
 
-  if (!user || !user.comparePassword(password)) {
+  if (!user || !user.verify || !user.comparePassword(password)) {
     // user.comparePassword - метод з схеми userSchema
-    throw createError(401, `Email or password is wrong`);
+    throw createError(401, `Email or password is wrong or not verify`);
   }
 
   const payload = {

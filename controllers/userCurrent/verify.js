@@ -1,12 +1,11 @@
 const createError = require("http-errors");
-const bcrypt = require("bcryptjs");
-const gravatar = require("gravatar");
+
 const { v4: uuidv4 } = require("uuid");
 
 const { User } = require("../../models/user");
 const { sendEmail } = require("../../helpers");
 
-const signUp = async (req, res, next) => {
+const verify = async (req, res, next) => {
   const { email, password } = req.body;
 
   const user = await User.findOne({ email }); // поверне null якщо не знайде
@@ -46,4 +45,4 @@ const signUp = async (req, res, next) => {
   });
 };
 
-module.exports = signUp;
+module.exports = verify;
