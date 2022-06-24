@@ -6,27 +6,19 @@ const { User } = require("../../models/user");
 const { sendEmail } = require("../../helpers");
 
 const verify = async (req, res, next) => {
-  const { email, password } = req.body;
+  const { email } = req.body;
 
   const user = await User.findOne({ email }); // поверне null якщо не знайде
-  if (user) {
-    throw createError(409, `Email ${email} in use`);
+
+  if (!user) {
+    throw createError(400, `User with email ${email} not found`);
   }
 
-  const avatarURL = gravatar.url(email, { protocol: "http", size: "100" }); // генеруєм аватар по email
-
-  const salt = bcrypt.genSaltSync(10); // солим наш пароль
-  const hashPassword = bcrypt.hashSync(password, salt); // хешуєм наш пароль
+  if (user.verify) {
+    throw createError(400, `"Verification has already been passed"`);
+  }
 
   const verificationToken = uuidv4(); // генеруєм id для верифікації токена
-
-  const result = await User.create({
-    email,
-    password: hashPassword,
-    avatarURL,
-    verificationToken,
-  });
-  const { subscription } = result;
 
   const mail = {
     // створюєм поштовий лист з силкою для  підтвердження
@@ -36,12 +28,8 @@ const verify = async (req, res, next) => {
   };
   await sendEmail(mail); // відправляєм лист
 
-  res.status(201).json({
-    status: "success",
-    code: 201,
-    data: {
-      user: { email, subscription, avatarURL, verificationToken },
-    },
+  res.json({
+    message: "Verification email sent",
   });
 };
 

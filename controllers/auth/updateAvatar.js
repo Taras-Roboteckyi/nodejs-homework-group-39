@@ -8,7 +8,7 @@ const fs = require("fs/promises");
 const avatarDir = path.join(__dirname, "../../", "public", "avatars");
 
 const updateAvatar = async (req, res, next) => {
-  /* console.log(req.file); */
+  
   const { path: tempUpload, originalname } = req.file;
 
   const { _id: id } = req.user;
