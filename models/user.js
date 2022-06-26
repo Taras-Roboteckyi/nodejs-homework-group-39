@@ -27,6 +27,14 @@ const userSchema = Schema(
       type: String,
       required: true,
     },
+    verify: {
+      type: Boolean,
+      default: false,
+    },
+    verificationToken: {
+      type: String,
+      required: [true, "Verify token is required"],
+    },
   },
   { versionKey: false, timestamps: true }
 );
@@ -60,6 +68,18 @@ const subscriptionJoiSchema = Joi.object({
     }),
 });
 
+const verifyJoiSchema = Joi.object({
+  email: Joi.string()
+    .email({
+      minDomainSegments: 2,
+      tlds: { allow: ["com", "net", "uk"] },
+    })
+    .required()
+    .messages({
+      "any.required": "missing required email field",
+    }),
+});
+
 const User = model("user", userSchema); /* створюєм модель */
 
-module.exports = { User, joiSchema, subscriptionJoiSchema };
+module.exports = { User, joiSchema, subscriptionJoiSchema, verifyJoiSchema };
